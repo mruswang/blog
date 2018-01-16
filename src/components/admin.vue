@@ -3,7 +3,7 @@
 <el-header>
 	<div class="header-left">
 		<img src="../assets/logo.png" alt="">
-		<el-radio-group v-model="isCollapse">
+		<el-radio-group v-model="isCollapse" @change="selce">
 			<el-radio-button :label="false">展开</el-radio-button>
 			<el-radio-button :label="true">收起</el-radio-button>
 		</el-radio-group>
@@ -27,9 +27,22 @@
 
 <script>
 import Tab from 'components/tab'
+import {mapGetters, mapMutations} from 'vuex'
 export default {
   components: {
     Tab
+  },
+  computed: {
+    ...mapGetters([
+      'isCollapse'
+    ])
+  },
+  methods: {
+    selce () {
+    },
+    ...mapMutations({
+      _setCollapse: 'SET_COLLAPSE'
+    })
   }
 }
 </script>

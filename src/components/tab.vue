@@ -32,11 +32,12 @@
 </template>
 
 <script>
+import {mapGetters} from 'vuex'
 export default {
-  data () {
-    return {
-      isCollapse: false
-    }
+  computed: {
+    ...mapGetters([
+      'isCollapse'
+    ])
   }
 }
 </script>

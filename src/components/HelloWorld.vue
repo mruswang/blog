@@ -1,5 +1,5 @@
 <template>
-  <div class="content">
+  <div class="content" ref="content">
     <el-container>
       <el-main>
         <el-table :data="tableData">
@@ -19,12 +19,13 @@
     color: #333;
   }
   .content{
-    padding-left: 200px;
+    padding-left: 180px;
     padding-top: 60px;
   }
 </style>
 
 <script>
+import {mapGetters} from 'vuex'
 export default {
   data () {
     const item = {
@@ -34,6 +35,20 @@ export default {
     }
     return {
       tableData: Array(20).fill(item)
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'isCollapse'
+    ])
+  },
+  watch: {
+    isCollapse (newCollapse) {
+      if (newCollapse) {
+        this.$refs.content.style.paddingLeft = '46PX'
+      } else {
+        this.$refs.content.style.paddingLeft = '180PX'
+      }
     }
   }
 }

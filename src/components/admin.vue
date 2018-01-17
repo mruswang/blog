@@ -4,8 +4,8 @@
 	<div class="header-left">
 		<img src="../assets/logo.png" alt="">
 		<el-radio-group v-model="isCollapse">
-			<el-radio-button :label="false">展开</el-radio-button>
-			<el-radio-button :label="true">收起</el-radio-button>
+			<el-radio-button v-if="isCollapse===true" :label="false"><i class="el-icon-d-arrow-right"></i></el-radio-button>
+			<el-radio-button v-else :label="true"><i class="el-icon-d-arrow-left"></i></el-radio-button>
 		</el-radio-group>
 	</div>
 <div>
@@ -43,8 +43,8 @@ export default {
     }
   },
   methods: {
-  	...mapActions([
-      'selectPlay', // 将 `this.increment()` 映射为 `this.$store.dispatch('increment')`
+    ...mapActions([
+      'selectPlay' // 将 `this.increment()` 映射为 `this.$store.dispatch('increment')`
     ])
   }
 }
@@ -71,5 +71,8 @@ export default {
   width: 40px;
   height: 40px;
   border-radius: 50%;
+}
+.el-radio-button__inner{
+  padding: 5px;
 }
 </style>

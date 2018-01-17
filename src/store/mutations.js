@@ -1,8 +1,8 @@
 import * as types from './mutation-types'
 
 const mutations = {
-  [types.SET_COLLAPSE] (state, singer) {
-    state.singer = singer
+  [types.SET_COLLAPSE] (state, val) {
+    state.isCollapse = val
   }
 }
 

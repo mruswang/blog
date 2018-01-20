@@ -3,7 +3,7 @@
     <div>
       <h4>资讯列表</h4>
       <div>
-        <el-button type="primary">发布资讯</el-button>
+        <el-button @click="ziadd" type="primary">发布资讯</el-button>
       </div>
     </div>
     <el-table
@@ -64,6 +64,9 @@ export default {
   methods: {
     formatter (row, column) {
       return row.address
+    },
+    ziadd () {
+      this.$router.push({ path: 'img-add' })
     }
   },
   watch: {
@@ -84,6 +87,6 @@ export default {
     padding-top: 60px;
   }
   .el-table th>.cell{
-  text-align:center
-}
+    text-align:center
+  }
 </style>

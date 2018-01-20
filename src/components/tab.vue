@@ -1,14 +1,14 @@
 <template>
   <div class="tab">
-    <el-menu default-active="zi-list" router class="el-menu-vertical-demo" :collapse="isCollapse">
+    <el-menu default-active="img-list" router class="el-menu-vertical-demo" :collapse="isCollapse">
       <el-submenu index="1">
         <template slot="title">
           <i class="el-icon-edit"></i>
-          <span slot="title">资讯管理</span>
+          <span slot="title">图片管理</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item index="zi-list">资讯列表</el-menu-item>
-          <el-menu-item index="zi-interest">资讯兴趣</el-menu-item>
+          <el-menu-item index="img-list">图片列表</el-menu-item>
+          <el-menu-item index="img-category">图片分类</el-menu-item>
         </el-menu-item-group>
       </el-submenu>
       <el-submenu index="2">

@@ -1,8 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import HelloWorld from '@/components/HelloWorld'
-import ziList from '@/components/zi-list'
-import ziInterest from '@/components/zi-interest'
+import imgList from '@/components/img-list'
+import imgCategory from '@/components/img-category'
+import imgAdd from '@/components/img-add'
 
 Vue.use(Router)
 
@@ -14,14 +15,19 @@ export default new Router({
       component: HelloWorld
     },
     {
-      path: '/zi-list',
-      name: 'ziList',
-      component: ziList
+      path: '/img-list',
+      name: 'imgList',
+      component: imgList
     },
     {
-      path: '/zi-interest',
-      name: 'ziInterest',
-      component: ziInterest
+      path: '/img-category',
+      name: 'imgCategory',
+      component: imgCategory
+    },
+    {
+      path: '/img-add',
+      name: 'imgAdd',
+      component: imgAdd
     }
   ]
 })

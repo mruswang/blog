@@ -1,5 +1,11 @@
 <template>
   <div class="content" ref="content">
+    <div class="title">
+      <h4>图片分类</h4>
+      <div>
+        <el-button @click="ziadd" type="primary">增加分类</el-button>
+      </div>
+    </div>
     <el-table
       :data="tableData"
       style="width: 100%"
@@ -65,7 +71,7 @@ export default {
       if (newCollapse) {
         this.$refs.content.style.paddingLeft = '46PX'
       } else {
-        this.$refs.content.style.paddingLeft = '190PX'
+        this.$refs.content.style.paddingLeft = '200PX'
       }
     }
   }
@@ -74,10 +80,14 @@ export default {
 
 <style>
   .content{
-    padding-left: 190px;
+    padding-left: 200px;
     padding-top: 60px;
   }
+  .title{
+    text-align:left;
+    padding: 0 15px;
+  }
   .el-table th>.cell{
-  text-align:center
-}
+    text-align:center
+  }
 </style>

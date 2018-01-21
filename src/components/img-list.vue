@@ -1,9 +1,9 @@
 <template>
   <div class="content" ref="content">
-    <div>
-      <h4>资讯列表</h4>
+    <div class="title">
+      <h4>图片列表</h4>
       <div>
-        <el-button @click="ziadd" type="primary">发布资讯</el-button>
+        <el-button @click="ziadd" type="primary">发布图片</el-button>
       </div>
     </div>
     <el-table
@@ -19,7 +19,25 @@
       </el-table-column>
       <el-table-column
         prop="name"
-        label="姓名"
+        label="图片"
+        sortable
+        width="80">
+      </el-table-column>
+      <el-table-column
+        prop="name"
+        label="图片名称"
+        sortable
+        width="180">
+      </el-table-column>
+      <el-table-column
+        prop="name"
+        label="图片来源"
+        sortable
+        width="180">
+      </el-table-column>
+      <el-table-column
+        prop="name"
+        label="收藏数"
         sortable
         width="180">
       </el-table-column>
@@ -27,6 +45,17 @@
         prop="address"
         label="地址"
         :formatter="formatter">
+      </el-table-column>
+      <el-table-column label="操作">
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            >编辑</el-button>
+          <el-button
+            size="mini"
+            type="danger"
+            >删除</el-button>
+        </template>
       </el-table-column>
     </el-table>
   </div>
@@ -74,7 +103,7 @@ export default {
       if (newCollapse) {
         this.$refs.content.style.paddingLeft = '46PX'
       } else {
-        this.$refs.content.style.paddingLeft = '190PX'
+        this.$refs.content.style.paddingLeft = '200PX'
       }
     }
   }
@@ -83,8 +112,12 @@ export default {
 
 <style>
   .content{
-    padding-left: 190px;
+    padding-left: 200px;
     padding-top: 60px;
+  }
+  .title{
+    text-align:left;
+    padding: 0 15px;
   }
   .el-table th>.cell{
     text-align:center

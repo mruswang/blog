@@ -117,7 +117,7 @@ export default {
       if (newCollapse) {
         this.$refs.content.style.paddingLeft = '46PX'
       } else {
-        this.$refs.content.style.paddingLeft = '190PX'
+        this.$refs.content.style.paddingLeft = '200PX'
       }
     }
   }
@@ -126,7 +126,11 @@ export default {
 
 <style>
   .content{
-    padding-left: 190px;
+    padding-left: 200px;
     padding-top: 60px;
+  }
+  .demo-ruleForm{
+    margin-top:20px;
+    width:90%;
   }
 </style>

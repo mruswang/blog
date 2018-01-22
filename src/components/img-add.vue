@@ -1,5 +1,5 @@
 <template>
-  <div class="content" ref="content">
+  <div class="content" ref="content" :style="{'paddingLeft':isCollapse?'64px':'200px'}">
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="200px" class="demo-ruleForm">
       <el-form-item label="图片名称" prop="name">
         <el-input v-model="ruleForm.name"></el-input>
@@ -16,7 +16,8 @@
       </el-form-item>
       <el-form-item label="图片上传" prop="upload">
         <el-upload
-          action="https://jsonplaceholder.typicode.com/posts/"
+          action="http://localhost:8080/api/upload"
+          :headers="uploadheaders"
           list-type="picture-card"
           :on-preview="handlePictureCardPreview"
           :on-remove="handleRemove">
@@ -63,23 +64,15 @@ export default {
       },
       dialogImageUrl: '',
       dialogVisible: false,
-      options: [{
-        value: '选项1',
-        label: '黄金糕'
-      }, {
-        value: '选项2',
-        label: '双皮奶'
-      }, {
-        value: '选项3',
-        label: '蚵仔煎'
-      }, {
-        value: '选项4',
-        label: '龙须面'
-      }, {
-        value: '选项5',
-        label: '北京烤鸭'
-      }],
-      value4: ''
+      options: [],
+      value4: '',
+      uploadheaders: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE, PUT',
+        'Access-Control-Max-Age': '3600',
+        'Access-Control-Allow-Headers': 'Access-Control,Origin, X-Requested-With, Content-Type, Accept',
+        'Access-Control-Allow-Credentials': 'false'
+      }
     }
   },
   computed: {
@@ -87,7 +80,32 @@ export default {
       'isCollapse'
     ])
   },
+  created () {
+    setTimeout(() => {
+      this.getcategory()
+    }, 1000)
+  },
   methods: {
+    getcategory () {
+      this.$http.get('/admin/img-category').then((res) => {
+        this.options = this.dealcategory(res.data.data)
+        console.log(this.options)
+      })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+    dealcategory (data) {
+      let newarr = []
+      data.map((item, index) => {
+        var obj = {
+          value: item._id,
+          label: item.name
+        }
+        newarr.push(obj)
+      })
+      return newarr
+    },
     formatter (row, column) {
       return row.address
     },
@@ -111,22 +129,13 @@ export default {
       this.dialogImageUrl = file.url
       this.dialogVisible = true
     }
-  },
-  watch: {
-    isCollapse (newCollapse) {
-      if (newCollapse) {
-        this.$refs.content.style.paddingLeft = '46PX'
-      } else {
-        this.$refs.content.style.paddingLeft = '200PX'
-      }
-    }
   }
 }
 </script>
 
 <style>
   .content{
-    padding-left: 200px;
+    /*padding-left: 200px;*/
     padding-top: 60px;
   }
   .demo-ruleForm{

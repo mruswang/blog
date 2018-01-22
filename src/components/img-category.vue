@@ -1,34 +1,41 @@
 <template>
-  <div class="content" ref="content">
+  <div class="content" ref="content" :style="{'paddingLeft':isCollapse?'64px':'200px'}">
     <div class="title">
       <h4>图片分类</h4>
       <div>
-        <el-button @click="ziadd" type="primary">增加分类</el-button>
+        <el-button @click="CategoryAdd" type="primary">增加分类</el-button>
       </div>
     </div>
-    <el-table
-      :data="tableData"
-      style="width: 100%"
-      :default-sort = "{prop: 'date', order: 'descending'}"
-      >
-      <el-table-column
-        prop="date"
-        label="日期"
-        sortable
-        width="180">
-      </el-table-column>
-      <el-table-column
-        prop="name"
-        label="姓名"
-        sortable
-        width="180">
-      </el-table-column>
-      <el-table-column
-        prop="address"
-        label="地址"
-        :formatter="formatter">
-      </el-table-column>
-    </el-table>
+    <div>
+      <el-tree
+        :data="tree"
+        :props="defaultProps"
+        accordion
+        default-expand-all
+        :expand-on-click-node="false"
+        :render-content="renderContent"
+        >
+      </el-tree>
+    </div>
+    <el-dialog
+      title="提示"
+      :visible.sync="categoryAdd">
+      <el-form :model="form">
+        <el-form-item label="父级分类" :label-width="formLabelWidth">
+          <el-select v-model="form.region" placeholder="请选择父级分类">
+            <el-option label="顶级" value="0"></el-option>
+            <el-option v-for="(item, index) in category" :key="index" :label="item.name" :value="item._id"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="分类名称" :label-width="formLabelWidth">
+          <el-input v-model="form.name" auto-complete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="categoryAdd = false">取 消</el-button>
+        <el-button type="primary" @click="submit">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -37,23 +44,19 @@ import {mapGetters} from 'vuex'
 export default {
   data () {
     return {
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄'
-      }]
+      categoryAdd: false,
+      form: {
+        name: '',
+        region: '',
+        _id: ''
+      },
+      formLabelWidth: '120px',
+      category: [],
+      tree: [],
+      defaultProps: {
+        children: 'children',
+        label: 'label'
+      }
     }
   },
   computed: {
@@ -61,18 +64,123 @@ export default {
       'isCollapse'
     ])
   },
+  created () {
+    setTimeout(() => {
+      this.getcategory()
+    }, 1000)
+  },
   methods: {
     formatter (row, column) {
       return row.address
-    }
-  },
-  watch: {
-    isCollapse (newCollapse) {
-      if (newCollapse) {
-        this.$refs.content.style.paddingLeft = '46PX'
-      } else {
-        this.$refs.content.style.paddingLeft = '200PX'
+    },
+    CategoryAdd () {
+      this.categoryAdd = true
+      this.form.region = ''
+      this.form.name = ''
+      this.form._id = ''
+    },
+    getcategory () {
+      this.$http.get('/admin/img-category').then((res) => {
+        this.category = res.data.data
+        // 处理成树数据
+        this.tree = this.delshu(res.data.data)
+      })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+    delshu (data) {
+      let tree = []
+      for (let i in data) {
+        if (data[i].parentId === '0') {
+          let obj = {
+            _id: data[i]._id,
+            label: data[i].name,
+            parentId: data[i].parentId,
+            children: []
+          }
+          tree.push(obj)
+        }
       }
+      for (let i in data) {
+        for (let j in tree) {
+          if (data[i].parentId === tree[j]._id) {
+            let objc = {
+              _id: data[i]._id,
+              label: data[i].name,
+              parentId: data[i].parentId
+            }
+            tree[j].children.push(objc)
+          }
+        }
+      }
+      return tree
+    },
+    remove (data) {
+      this.$confirm('此操作将永久删除该项, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$http.post('/admin/img-category-del', {
+          _id: data._id
+        })
+          .then((res) => {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+            this.getcategory()
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
+    edit (data) {
+      console.log(data)
+      this.categoryAdd = true
+      this.form.region = data.parentId
+      this.form.name = data.label
+      this.form._id = data._id
+    },
+    renderContent (h, { node, data, store }) {
+      return (
+        <span style="flex: 1; display: flex; align-items: center; font-size: 14px; padding-right: 8px;">
+          <span>
+            <span>{node.label}</span>
+          </span>
+          <span>
+            <el-button style="font-size: 12px;margin-left:50px;" type="text" on-click={ () => this.edit(data) }>编辑</el-button>
+            <el-button style="font-size: 12px;margin-left:10px;" type="text" on-click={ () => this.remove(data) }>删除</el-button>
+          </span>
+        </span>)
+    },
+    submit () {
+      this.categoryAdd = false
+      this.$http.post('/admin/img-category-add', {
+        parentId: this.form.region,
+        name: this.form.name,
+        _id: this.form._id
+      })
+        .then((res) => {
+          console.log(res)
+          if (res.status === 200) {
+            this.$message({
+              message: '添加成功',
+              type: 'success'
+            })
+            this.getcategory()
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
     }
   }
 }

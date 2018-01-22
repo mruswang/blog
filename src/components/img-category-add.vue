@@ -1,9 +1,9 @@
 <template>
   <div class="content" ref="content" :style="{'paddingLeft':isCollapse?'64px':'200px'}">
     <div class="title">
-      <h4>图片列表</h4>
+      <h4>图片分类</h4>
       <div>
-        <el-button @click="ziadd" type="primary">发布图片</el-button>
+        <el-button @click="ziadd" type="primary">增加分类</el-button>
       </div>
     </div>
     <el-table
@@ -19,25 +19,7 @@
       </el-table-column>
       <el-table-column
         prop="name"
-        label="图片"
-        sortable
-        width="80">
-      </el-table-column>
-      <el-table-column
-        prop="name"
-        label="图片名称"
-        sortable
-        width="180">
-      </el-table-column>
-      <el-table-column
-        prop="name"
-        label="图片来源"
-        sortable
-        width="180">
-      </el-table-column>
-      <el-table-column
-        prop="name"
-        label="收藏数"
+        label="姓名"
         sortable
         width="180">
       </el-table-column>
@@ -45,17 +27,6 @@
         prop="address"
         label="地址"
         :formatter="formatter">
-      </el-table-column>
-      <el-table-column label="操作">
-        <template slot-scope="scope">
-          <el-button
-            size="mini"
-            >编辑</el-button>
-          <el-button
-            size="mini"
-            type="danger"
-            >删除</el-button>
-        </template>
       </el-table-column>
     </el-table>
   </div>
@@ -93,9 +64,6 @@ export default {
   methods: {
     formatter (row, column) {
       return row.address
-    },
-    ziadd () {
-      this.$router.push({ path: 'img-add' })
     }
   }
 }
@@ -103,6 +71,7 @@ export default {
 
 <style>
   .content{
+    padding-left: 200px;
     padding-top: 60px;
   }
   .title{

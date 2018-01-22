@@ -16,8 +16,7 @@
       </el-form-item>
       <el-form-item label="图片上传" prop="upload">
         <el-upload
-          action="http://localhost:8080/api/upload"
-          :headers="uploadheaders"
+          action="/admin/upload"
           list-type="picture-card"
           :on-preview="handlePictureCardPreview"
           :on-remove="handleRemove">
@@ -32,6 +31,9 @@
           <el-radio label="原创图片"></el-radio>
           <el-radio label="转载图片"></el-radio>
         </el-radio-group>
+      </el-form-item>
+      <el-form-item label="图片收藏数" prop="collect">
+        <el-input type="number" v-model="ruleForm.collect"></el-input>
       </el-form-item>
       <el-form-item label="图片描述" prop="desc">
         <el-input type="textarea" v-model="ruleForm.desc"></el-input>
@@ -49,30 +51,37 @@ import {mapGetters} from 'vuex'
 export default {
   data () {
     return {
+      _id: '',
       ruleForm: {
         name: '',
-        resource: ''
+        resource: '',
+        collect: ''
       },
       rules: {
         name: [
-          { required: true, message: '请输入活动名称', trigger: 'blur' },
+          { required: true, message: '请输入图片名称', trigger: 'blur' },
           { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
         ],
+        category: [
+          { required: true, message: '请选择图片分类', trigger: 'change' }
+        ],
+        upload: [
+          { required: true, message: '请选择图片', trigger: 'change' }
+        ],
         resource: [
-          { required: true, message: '请选择活动资源', trigger: 'change' }
+          { required: true, message: '请选择图片资源', trigger: 'change' }
+        ],
+        desc: [
+          { required: true, message: '请输入图片描述', trigger: 'change' }
+        ],
+        collect: [
+          { required: true, message: '请输入图片收藏数', trigger: 'change' }
         ]
       },
       dialogImageUrl: '',
       dialogVisible: false,
       options: [],
-      value4: '',
-      uploadheaders: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE, PUT',
-        'Access-Control-Max-Age': '3600',
-        'Access-Control-Allow-Headers': 'Access-Control,Origin, X-Requested-With, Content-Type, Accept',
-        'Access-Control-Allow-Credentials': 'false'
-      }
+      value4: ''
     }
   },
   computed: {
@@ -106,13 +115,18 @@ export default {
       })
       return newarr
     },
-    formatter (row, column) {
-      return row.address
-    },
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           alert('submit!')
+          this.$http.post('/admin/img-add',{
+            _id: this._id
+          }).then((res) => {
+            console.log(this.options)
+          })
+            .catch((err) => {
+              console.log(err)
+            })
         } else {
           console.log('error submit!!')
           return false
@@ -135,7 +149,6 @@ export default {
 
 <style>
   .content{
-    /*padding-left: 200px;*/
     padding-top: 60px;
   }
   .demo-ruleForm{

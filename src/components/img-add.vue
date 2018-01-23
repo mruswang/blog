@@ -5,7 +5,7 @@
         <el-input v-model="ruleForm.name"></el-input>
       </el-form-item>
       <el-form-item label="图片分类" prop="category">
-        <el-select v-model="value4" clearable placeholder="请选择">
+        <el-select v-model="ruleForm.category" clearable placeholder="请选择">
           <el-option
             v-for="item in options"
             :key="item.value"
@@ -14,16 +14,33 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="图片上传" prop="upload">
+      <el-form-item label="图片上传" prop="dialogImageUrl">
+        <ul class="el-upload-list el-upload-list--picture-card" ref="reimg" v-show="editimg">
+          <li tabindex="0" class="el-upload-list__item is-success">
+            <img :src="ruleForm.dialogImageUrl" alt="" class="el-upload-list__item-thumbnail">
+            <label class="el-upload-list__item-status-label">
+              <i class="el-icon-upload-success el-icon-check"></i>
+            </label>
+            <span class="el-upload-list__item-actions">
+              <span class="el-upload-list__item-preview">
+                <i class="el-icon-zoom-in" @click="check"></i>
+              </span>
+              <span class="el-upload-list__item-delete">
+                <i class="el-icon-delete" @click="removeimg"></i>
+              </span>
+            </span>
+          </li>
+        </ul>
         <el-upload
           action="/admin/upload"
           list-type="picture-card"
           :on-preview="handlePictureCardPreview"
-          :on-remove="handleRemove">
+          :on-remove="handleRemove"
+          :on-success="changeurl">
           <i class="el-icon-plus"></i>
         </el-upload>
         <el-dialog :visible.sync="dialogVisible" size="tiny">
-          <img width="100%" :src="dialogImageUrl" alt="">
+          <img width="100%" :src="ruleForm.dialogImageUrl" alt="">
         </el-dialog>
       </el-form-item>
       <el-form-item label="图片资源" prop="resource">
@@ -51,21 +68,24 @@ import {mapGetters} from 'vuex'
 export default {
   data () {
     return {
-      _id: '',
+      id: '',
       ruleForm: {
         name: '',
         resource: '',
-        collect: ''
+        collect: '',
+        desc: '',
+        category: '',
+        dialogImageUrl: ''
       },
       rules: {
         name: [
           { required: true, message: '请输入图片名称', trigger: 'blur' },
-          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          { min: 3, max: 15, message: '长度在 3 到 15 个字符', trigger: 'blur' }
         ],
         category: [
           { required: true, message: '请选择图片分类', trigger: 'change' }
         ],
-        upload: [
+        dialogImageUrl: [
           { required: true, message: '请选择图片', trigger: 'change' }
         ],
         resource: [
@@ -78,10 +98,9 @@ export default {
           { required: true, message: '请输入图片收藏数', trigger: 'change' }
         ]
       },
-      dialogImageUrl: '',
       dialogVisible: false,
       options: [],
-      value4: ''
+      editimg: false
     }
   },
   computed: {
@@ -92,17 +111,39 @@ export default {
   created () {
     setTimeout(() => {
       this.getcategory()
+      this.getdetail()
     }, 1000)
   },
   methods: {
     getcategory () {
       this.$http.get('/admin/img-category').then((res) => {
         this.options = this.dealcategory(res.data.data)
-        console.log(this.options)
       })
         .catch((err) => {
           console.log(err)
         })
+    },
+    getdetail () {
+      let _id = this.$route.params.id
+      if (_id === '1') {
+        this.id = ''
+      } else {
+        this.id = _id
+        this.$http.post('/admin/img-detail', {_id: _id}).then((res) => {
+          let data = res.data.data[0]
+          this.ruleForm.name = data.name
+          this.ruleForm.resource = data.resource
+          this.ruleForm.collect = data.collect
+          this.ruleForm.desc = data.desc
+          this.ruleForm.category = data.category
+          this.ruleForm.dialogImageUrl = data.imgurl
+          this.editimg = true
+          console.log(res)
+        })
+          .catch((err) => {
+            console.log(err)
+          })
+      }
     },
     dealcategory (data) {
       let newarr = []
@@ -115,14 +156,36 @@ export default {
       })
       return newarr
     },
+    check () {
+      this.dialogVisible = true
+    },
+    removeimg () {
+      this.ruleForm.ruleForm = ''
+      let children = this.$refs.reimg
+      children.parentNode.removeChild(children)
+    },
+    changeurl (response, file, fileList) {
+      this.ruleForm.dialogImageUrl = response.filename
+    },
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert('submit!')
-          this.$http.post('/admin/img-add',{
-            _id: this._id
+          this.$http.post('/admin/img-add', {
+            _id: this.id,
+            name: this.ruleForm.name,
+            category: this.ruleForm.category,
+            imgurl: this.ruleForm.dialogImageUrl,
+            resource: this.ruleForm.resource,
+            collect: this.ruleForm.collect,
+            desc: this.ruleForm.desc
           }).then((res) => {
-            console.log(this.options)
+            if (res.status === 200) {
+              this.$message({
+                message: '添加成功',
+                type: 'success'
+              })
+              this.$router.push({ path: '/img-list' })
+            }
           })
             .catch((err) => {
               console.log(err)
@@ -154,5 +217,8 @@ export default {
   .demo-ruleForm{
     margin-top:20px;
     width:90%;
+  }
+  .el-form-item__content{
+    display: flex;
   }
 </style>

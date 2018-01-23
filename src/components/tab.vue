@@ -7,8 +7,8 @@
           <span slot="title">图片管理</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item index="img-list">图片列表</el-menu-item>
-          <el-menu-item index="img-category">图片分类</el-menu-item>
+          <el-menu-item index="/img-list">图片列表</el-menu-item>
+          <el-menu-item index="/img-category">图片分类</el-menu-item>
         </el-menu-item-group>
       </el-submenu>
       <el-submenu index="2">

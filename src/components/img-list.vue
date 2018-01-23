@@ -12,49 +12,64 @@
       :default-sort = "{prop: 'date', order: 'descending'}"
       >
       <el-table-column
-        prop="date"
-        label="日期"
+        prop="_id"
+        label="图片ID"
         sortable
-        width="180">
+        width="120">
       </el-table-column>
       <el-table-column
-        prop="name"
         label="图片"
         sortable
         width="80">
+        <template slot-scope="scope">
+          <img width="60" :src="scope.row.imgurl" alt="">
+        </template>
       </el-table-column>
       <el-table-column
         prop="name"
         label="图片名称"
         sortable
-        width="180">
+        width="120">
       </el-table-column>
       <el-table-column
-        prop="name"
+        prop="resource"
         label="图片来源"
         sortable
-        width="180">
+        width="120">
       </el-table-column>
       <el-table-column
-        prop="name"
+        prop="collect"
         label="收藏数"
+        sortable
+        width="120">
+      </el-table-column>
+      <el-table-column
+        prop="category_name"
+        label="图片分类"
+        sortable
+        width="120">
+      </el-table-column>
+      <el-table-column
+        prop="creatime"
+        label="创建日期"
         sortable
         width="180">
       </el-table-column>
       <el-table-column
-        prop="address"
-        label="地址"
-        :formatter="formatter">
+        prop="updatetime"
+        label="修改日期"
+        sortable
+        width="180">
       </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button
             size="mini"
-            >编辑</el-button>
+            @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
           <el-button
             size="mini"
             type="danger"
-            >删除</el-button>
+            @click="handleDelete(scope.$index, scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -66,23 +81,7 @@ import {mapGetters} from 'vuex'
 export default {
   data () {
     return {
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄'
-      }]
+      tableData: []
     }
   },
   computed: {
@@ -90,12 +89,55 @@ export default {
       'isCollapse'
     ])
   },
+  created () {
+    setTimeout(() => {
+      this.getlist()
+    }, 500)
+  },
   methods: {
     formatter (row, column) {
       return row.address
     },
     ziadd () {
-      this.$router.push({ path: 'img-add' })
+      this.$router.push({ path: 'img-add/1' })
+    },
+    getlist () {
+      this.$http.get('/admin/img-list').then((res) => {
+        this.tableData = res.data.data
+        console.log(this.tableData)
+      })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+    handleEdit (index, row) {
+      this.$router.push({path: `img-add/${row._id}`})
+    },
+    handleDelete (index, row) {
+      this.$confirm('此操作将永久删除该项, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$http.post('/admin/img-del', {
+          _id: row._id
+        })
+          .then((res) => {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+            this.getlist()
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
     }
   }
 }

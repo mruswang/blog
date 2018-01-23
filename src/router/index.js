@@ -25,7 +25,7 @@ export default new Router({
       component: imgCategory
     },
     {
-      path: '/img-add',
+      path: '/img-add/:id',
       name: 'imgAdd',
       component: imgAdd
     }

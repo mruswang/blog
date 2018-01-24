@@ -13,18 +13,24 @@
       </el-submenu>
       <el-submenu index="2">
         <template slot="title">
-          <i class="el-icon-menu"></i>
-          <span slot="title">导航二</span>
+          <i class="el-icon-info"></i>
+          <span slot="title">用户管理</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item index="2-1">选项1</el-menu-item>
-          <el-menu-item index="2-2">选项2</el-menu-item>
+          <el-menu-item index="/member-list">用户列表</el-menu-item>
+          <!-- <el-menu-item index="2-2">选项2</el-menu-item> -->
         </el-menu-item-group>
       </el-submenu>
-      <el-menu-item index="3">
-        <i class="el-icon-setting"></i>
-        <span slot="title">导航三</span>
-      </el-menu-item>
+      <el-submenu index="3">
+        <template slot="title">
+          <i class="el-icon-setting"></i>
+          <span slot="title">超级管理员</span>
+        </template>
+        <el-menu-item-group>
+          <el-menu-item index="/admin-list">管理员列表</el-menu-item>
+          <el-menu-item index="/admin-pass">修改密码</el-menu-item>
+        </el-menu-item-group>
+      </el-submenu>
     </el-menu>
   </div>
 </template>

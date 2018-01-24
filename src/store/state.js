@@ -1,5 +1,6 @@
 const state = {
-  isCollapse: false
+  isCollapse: false,
+  islogin: true
 }
 
 export default state

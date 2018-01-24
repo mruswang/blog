@@ -44,10 +44,12 @@
         </el-dialog>
       </el-form-item>
       <el-form-item label="图片资源" prop="resource">
-        <el-radio-group v-model="ruleForm.resource">
-          <el-radio label="原创图片"></el-radio>
-          <el-radio label="转载图片"></el-radio>
-        </el-radio-group>
+        <div>
+          <el-radio-group v-model="ruleForm.resource">
+            <el-radio label="原创图片"></el-radio>
+            <el-radio label="转载图片"></el-radio>
+          </el-radio-group>
+        </div>
       </el-form-item>
       <el-form-item label="图片收藏数" prop="collect">
         <el-input type="number" v-model="ruleForm.collect"></el-input>

@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <admin v-if="is_login===true"></admin>
+    <admin v-if="islogin===true"></admin>
     <login v-else></login>
   </div>
 </template>
@@ -8,12 +8,15 @@
 <script>
 import login from 'components/login'
 import admin from 'components/admin'
+import {mapGetters} from 'vuex'
 export default {
   data () {
-    return {
-      is_login: true,
-      isCollapse: false
-    }
+    return {}
+  },
+  computed: {
+    ...mapGetters([
+      'islogin'
+    ])
   },
   components: {
     login, admin

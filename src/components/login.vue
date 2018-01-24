@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
 export default {
   data () {
     var validateName = (rule, value, callback) => {
@@ -53,6 +54,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           alert('submit!')
+          // 执行ajax后 this.setlogin(true)
         } else {
           console.log('error submit!!')
           return false
@@ -61,7 +63,10 @@ export default {
     },
     resetForm (formName) {
       this.$refs[formName].resetFields()
-    }
+    },
+    ...mapMutations({
+      setlogin: 'SET_LOGIN'
+    })
   }
 }
 </script>

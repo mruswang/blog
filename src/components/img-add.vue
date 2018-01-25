@@ -107,7 +107,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'isCollapse'
+      'isCollapse',
+      'token'
     ])
   },
   created () {
@@ -118,7 +119,11 @@ export default {
   },
   methods: {
     getcategory () {
-      this.$http.get('/admin/img-category').then((res) => {
+      this.$http({
+        method: 'get',
+        url: '/admin/img-category',
+        headers: {'token': this.token}
+      }).then((res) => {
         this.options = this.dealcategory(res.data.data)
       })
         .catch((err) => {
@@ -131,7 +136,12 @@ export default {
         this.id = ''
       } else {
         this.id = _id
-        this.$http.post('/admin/img-detail', {_id: _id}).then((res) => {
+        this.$http({
+          method: 'post',
+          url: '/admin/img-detail',
+          headers: {'token': this.token},
+          data: {_id: _id}
+        }).then((res) => {
           let data = res.data.data[0]
           this.ruleForm.name = data.name
           this.ruleForm.resource = data.resource
@@ -172,14 +182,19 @@ export default {
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.$http.post('/admin/img-add', {
-            _id: this.id,
-            name: this.ruleForm.name,
-            category: this.ruleForm.category,
-            imgurl: this.ruleForm.dialogImageUrl,
-            resource: this.ruleForm.resource,
-            collect: this.ruleForm.collect,
-            desc: this.ruleForm.desc
+          this.$http({
+            method: 'post',
+            url: '/admin/img-add',
+            headers: {'token': this.token},
+            data: {
+              _id: this.id,
+              name: this.ruleForm.name,
+              category: this.ruleForm.category,
+              imgurl: this.ruleForm.dialogImageUrl,
+              resource: this.ruleForm.resource,
+              collect: this.ruleForm.collect,
+              desc: this.ruleForm.desc
+            }
           }).then((res) => {
             if (res.status === 200) {
               this.$message({

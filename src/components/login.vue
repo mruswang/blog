@@ -17,7 +17,8 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import sha1 from 'js-sha1'
+import { mapActions } from 'vuex'
 export default {
   data () {
     var validateName = (rule, value, callback) => {
@@ -53,8 +54,27 @@ export default {
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert('submit!')
-          // 执行ajax后 this.setlogin(true)
+          this.$http.post('/admin/admin-login', {
+            name: this.ruleForm2.nickname,
+            pass: sha1(this.ruleForm2.pass)
+          }).then((res) => {
+            if (res.data.status === 200) {
+              this.$message({
+                message: '登录成功',
+                type: 'success'
+              })
+              this.setlogin({str: res.data.data, type: true})
+              this.$router.push({ path: '/' })
+            } else {
+              this.$message({
+                message: res.data.message,
+                type: 'info'
+              })
+            }
+          })
+            .catch((err) => {
+              console.log(err)
+            })
         } else {
           console.log('error submit!!')
           return false
@@ -64,9 +84,9 @@ export default {
     resetForm (formName) {
       this.$refs[formName].resetFields()
     },
-    ...mapMutations({
-      setlogin: 'SET_LOGIN'
-    })
+    ...mapActions([
+      'setlogin'
+    ])
   }
 }
 </script>

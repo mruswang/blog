@@ -96,7 +96,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'isCollapse'
+      'isCollapse',
+      'token'
     ]),
     tableData () {
       return this.tablePagination(this.alldata)
@@ -112,7 +113,11 @@ export default {
       this.$router.push({ path: 'img-add/1' })
     },
     getlist () {
-      this.$http.get('/admin/img-list').then((res) => {
+      this.$http({
+        method: 'get',
+        url: '/admin/img-list',
+        headers: {'token': this.token}
+      }).then((res) => {
         this.alldata = res.data.data
       })
         .catch((err) => {
@@ -145,16 +150,25 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$http.post('/admin/img-del', {
-          _id: row._id
-        })
-          .then((res) => {
+        this.$http({
+          method: 'post',
+          url: '/admin/img-del',
+          headers: {'token': this.token},
+          data: {_id: row._id}
+        }).then((res) => {
+          if (res.data.status === 200) {
             this.$message({
               type: 'success',
               message: '删除成功!'
             })
             this.getlist()
-          })
+          } else {
+            this.$message({
+              type: 'info',
+              message: res.data.message
+            })
+          }
+        })
           .catch((err) => {
             console.log(err)
           })

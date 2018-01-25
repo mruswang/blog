@@ -82,7 +82,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'isCollapse'
+      'isCollapse',
+      'token'
     ])
   },
   created () {
@@ -97,7 +98,12 @@ export default {
         this.id = ''
       } else {
         this.id = _id
-        this.$http.post('/admin/admin-detail', {_id: _id}).then((res) => {
+        this.$http({
+          method: 'post',
+          url: '/admin/admin-detail',
+          headers: {'token': this.token},
+          data: {_id: _id}
+        }).then((res) => {
           let data = res.data.data[0]
           this.ruleForm.name = data.name
           this.ruleForm.email = data.email
@@ -115,13 +121,18 @@ export default {
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.$http.post('/admin/admin-add', {
-            _id: this.id,
-            name: this.ruleForm.name,
-            email: this.ruleForm.email,
-            phone: this.ruleForm.phone,
-            status: this.ruleForm.status,
-            pass: this.ruleForm.pass.length === 40 ? this.ruleForm.pass : sha1(this.ruleForm.pass)
+          this.$http({
+            method: 'post',
+            url: '/admin/admin-add',
+            headers: {'token': this.token},
+            data: {
+              _id: this.id,
+              name: this.ruleForm.name,
+              email: this.ruleForm.email,
+              phone: this.ruleForm.phone,
+              status: this.ruleForm.status,
+              pass: this.ruleForm.pass.length === 40 ? this.ruleForm.pass : sha1(this.ruleForm.pass)
+            }
           }).then((res) => {
             if (res.data.status === 200) {
               this.$message({

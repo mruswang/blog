@@ -72,7 +72,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'isCollapse'
+      'isCollapse',
+      'token'
     ])
   },
   created () {
@@ -85,7 +86,11 @@ export default {
       this.$router.push({ path: 'admin-add/1' })
     },
     getlist () {
-      this.$http.get('/admin/admin-list').then((res) => {
+      this.$http({
+        method: 'get',
+        url: '/admin/admin-list',
+        headers: {'token': this.token}
+      }).then((res) => {
         this.alldata = res.data.data
         console.log(res)
       })
@@ -102,16 +107,18 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$http.post('/admin/admin-del', {
-          _id: row._id
-        })
-          .then((res) => {
-            this.$message({
-              type: 'success',
-              message: '删除成功!'
-            })
-            this.getlist()
+        this.$http({
+          method: 'post',
+          url: '/admin/admin-del',
+          headers: {'token': this.token},
+          data: {_id: row._id}
+        }).then((res) => {
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
           })
+          this.getlist()
+        })
           .catch((err) => {
             console.log(err)
           })

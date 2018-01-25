@@ -3,6 +3,7 @@
  */
 import * as types from './mutation-types'
 
-export const selectPlay = function ({commit, state}, {list, index}) {
-  commit(types.SET_COLLAPSE, index)
+export const setlogin = function ({commit, state}, {str, type}) {
+  commit(types.SET_LOGIN, type)
+  commit(types.SET_TOKEN, str)
 }

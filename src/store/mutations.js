@@ -6,6 +6,9 @@ const mutations = {
   },
   [types.SET_LOGIN] (state, val) {
     state.islogin = val
+  },
+  [types.SET_TOKEN] (state, val) {
+    state.token = val
   }
 }
 

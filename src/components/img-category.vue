@@ -61,7 +61,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'isCollapse'
+      'isCollapse',
+      'token'
     ])
   },
   created () {
@@ -80,7 +81,11 @@ export default {
       this.form._id = ''
     },
     getcategory () {
-      this.$http.get('/admin/img-category').then((res) => {
+      this.$http({
+        method: 'get',
+        url: '/admin/img-category',
+        headers: {'token': this.token}
+      }).then((res) => {
         this.category = res.data.data
         // 处理成树数据
         this.tree = this.delshu(res.data.data)
@@ -122,16 +127,25 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$http.post('/admin/img-category-del', {
-          _id: data._id
-        })
-          .then((res) => {
+        this.$http({
+          method: 'post',
+          url: '/admin/img-category-del',
+          headers: {'token': this.token},
+          data: {_id: data._id}
+        }).then((res) => {
+          if (res.data.status === 200) {
             this.$message({
               type: 'success',
               message: '删除成功!'
             })
             this.getcategory()
-          })
+          } else {
+            this.$message({
+              type: 'info',
+              message: res.data.message
+            })
+          }
+        })
           .catch((err) => {
             console.log(err)
           })
@@ -163,21 +177,25 @@ export default {
     },
     submit () {
       this.categoryAdd = false
-      this.$http.post('/admin/img-category-add', {
-        parentId: this.form.region,
-        name: this.form.name,
-        _id: this.form._id
+      this.$http({
+        method: 'post',
+        url: '/admin/img-category-add',
+        headers: {'token': this.token},
+        data: {
+          parentId: this.form.region,
+          name: this.form.name,
+          _id: this.form._id
+        }
+      }).then((res) => {
+        console.log(res)
+        if (res.status === 200) {
+          this.$message({
+            message: '添加成功',
+            type: 'success'
+          })
+          this.getcategory()
+        }
       })
-        .then((res) => {
-          console.log(res)
-          if (res.status === 200) {
-            this.$message({
-              message: '添加成功',
-              type: 'success'
-            })
-            this.getcategory()
-          }
-        })
         .catch((err) => {
           console.log(err)
         })

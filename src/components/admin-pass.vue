@@ -52,17 +52,23 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'isCollapse'
+      'isCollapse',
+      'token'
     ])
   },
   methods: {
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.$http.post('/admin/admin-pass', {
-            phone: this.ruleForm.phone,
-            oldpass: sha1(this.ruleForm.oldpass),
-            newpass: sha1(this.ruleForm.newpass)
+          this.$http({
+            method: 'post',
+            url: '/admin/admin-pass',
+            headers: {'token': this.token},
+            data: {
+              phone: this.ruleForm.phone,
+              oldpass: sha1(this.ruleForm.oldpass),
+              newpass: sha1(this.ruleForm.newpass)
+            }
           }).then((res) => {
             if (res.data.status === 200) {
               this.$message({

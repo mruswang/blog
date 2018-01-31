@@ -7,6 +7,8 @@ import imgAdd from '@/components/img-add'
 import adminAdd from '@/components/admin-add'
 import adminList from '@/components/admin-list'
 import adminPass from '@/components/admin-pass'
+import memberList from '@/components/member-list'
+import memberAdd from '@/components/member-add'
 
 Vue.use(Router)
 
@@ -46,6 +48,16 @@ export default new Router({
       path: '/admin-add/:id',
       name: 'adminAdd',
       component: adminAdd
+    },
+    {
+      path: '/member-list',
+      name: 'memberList',
+      component: memberList
+    },
+    {
+      path: '/member-add/:id',
+      name: 'memberAdd',
+      component: memberAdd
     }
   ]
 })

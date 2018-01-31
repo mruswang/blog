@@ -177,6 +177,7 @@ export default {
       children.parentNode.removeChild(children)
     },
     changeurl (response, file, fileList) {
+      console.log(response)
       this.ruleForm.dialogImageUrl = response.filename
     },
     submitForm (formName) {

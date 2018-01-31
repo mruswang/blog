@@ -1,63 +1,55 @@
 <template>
   <div class="content" ref="content" :style="{'paddingLeft':isCollapse?'64px':'200px'}">
     <div class="title">
-      <h4>图片列表</h4>
+      <h4>用户列表</h4>
       <div>
-        <el-button @click="ziadd" type="primary">发布图片</el-button>
+        <el-button @click="adminadd" type="primary">添加用户</el-button>
       </div>
     </div>
     <el-table
-      :data="tableData"
+      :data="alldata"
       style="width: 100%"
       :default-sort = "{prop: 'date', order: 'descending'}"
       >
       <el-table-column
         prop="_id"
-        label="图片ID"
+        label="用户ID"
         sortable
         width="120">
-      </el-table-column>
-      <el-table-column
-        label="图片"
-        sortable
-        width="80">
-        <template slot-scope="scope">
-          <img width="60" :src="scope.row.imgurl" alt="">
-        </template>
       </el-table-column>
       <el-table-column
         prop="name"
-        label="图片名称"
+        label="用户名称"
         sortable
         width="120">
       </el-table-column>
       <el-table-column
-        prop="resource"
-        label="图片来源"
+        prop="email"
+        label="电子邮箱"
+        sortable
+        width="180">
+      </el-table-column>
+      <el-table-column
+        prop="phone"
+        label="手机号"
         sortable
         width="120">
       </el-table-column>
       <el-table-column
-        prop="collect"
-        label="收藏数"
+        prop="vip"
+        label="vip"
         sortable
         width="120">
       </el-table-column>
       <el-table-column
-        prop="category_name"
-        label="图片分类"
+        prop="status"
+        label="账号状态"
         sortable
         width="120">
       </el-table-column>
       <el-table-column
         prop="creatime"
         label="创建日期"
-        sortable
-        width="180">
-      </el-table-column>
-      <el-table-column
-        prop="updatetime"
-        label="修改日期"
         sortable
         width="180">
       </el-table-column>
@@ -73,13 +65,6 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination class="page"
-      background
-      layout="prev, pager, next"
-      :total="total"
-      :page-size="pageSize"
-      @current-change="handleCurrentChange">
-    </el-pagination>
   </div>
 </template>
 
@@ -88,20 +73,14 @@ import {mapGetters} from 'vuex'
 export default {
   data () {
     return {
-      alldata: [],
-      total: 0,
-      currentPage: 1,
-      pageSize: 5
+      alldata: []
     }
   },
   computed: {
     ...mapGetters([
       'isCollapse',
       'token'
-    ]),
-    tableData () {
-      return this.tablePagination(this.alldata)
-    }
+    ])
   },
   created () {
     setTimeout(() => {
@@ -109,41 +88,24 @@ export default {
     }, 500)
   },
   methods: {
-    ziadd () {
-      this.$router.push({ path: 'img-add/1' })
+    adminadd () {
+      this.$router.push({ path: 'member-add/1' })
     },
     getlist () {
       this.$http({
         method: 'get',
-        url: '/admin/img-list',
+        url: '/admin/member-list',
         headers: {'token': this.token}
       }).then((res) => {
         this.alldata = res.data.data
-        console.log(res.data)
+        console.log(res)
       })
         .catch((err) => {
           console.log(err)
         })
     },
-    tablePagination (data) {
-      let array = []
-      let startNum = 0
-      let endNum = 0
-      this.total = data.length
-      startNum = (this.currentPage - 1) * this.pageSize
-      if (this.currentPage * this.pageSize < this.total) {
-        endNum = this.currentPage * this.pageSize
-      } else {
-        endNum = this.total
-      }
-      array = data.slice(startNum, endNum)
-      return array
-    },
-    handleCurrentChange (val) {
-      this.currentPage = val
-    },
     handleEdit (index, row) {
-      this.$router.push({path: `img-add/${row._id}`})
+      this.$router.push({path: `member-add/${row._id}`})
     },
     handleDelete (index, row) {
       this.$confirm('此操作将永久删除该项, 是否继续?', '提示', {
@@ -153,22 +115,15 @@ export default {
       }).then(() => {
         this.$http({
           method: 'post',
-          url: '/admin/img-del',
+          url: '/admin/admin-del',
           headers: {'token': this.token},
           data: {_id: row._id}
         }).then((res) => {
-          if (res.data.status === 200) {
-            this.$message({
-              type: 'success',
-              message: '删除成功!'
-            })
-            this.getlist()
-          } else {
-            this.$message({
-              type: 'info',
-              message: res.data.message
-            })
-          }
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+          this.getlist()
         })
           .catch((err) => {
             console.log(err)

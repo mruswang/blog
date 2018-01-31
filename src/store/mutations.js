@@ -9,6 +9,9 @@ const mutations = {
   },
   [types.SET_TOKEN] (state, val) {
     state.token = val
+  },
+  [types.SET_NAME] (state, val) {
+    state.name = val
   }
 }
 

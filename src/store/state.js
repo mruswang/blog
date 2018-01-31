@@ -1,7 +1,8 @@
 const state = {
   isCollapse: false,
   islogin: false,
-  token: ''
+  token: '',
+  name: ''
 }
 
 export default state

@@ -63,8 +63,8 @@ export default {
                 message: '登录成功',
                 type: 'success'
               })
-              this.setlogin({str: res.data.data, type: true})
-              this.$router.push({ path: '/' })
+              this.setlogin({str: res.data.data, type: true, name: res.data.name})
+              // this.$router.push({ path: '/' })
             } else {
               this.$message({
                 message: res.data.message,
